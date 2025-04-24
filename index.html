@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Todo Lock App</title>
+    <link rel="manifest" id="manifest-placeholder">
+    <link rel="apple-touch-icon" href="/api/placeholder/192/192">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #F5F5F5;
+            padding-bottom: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: #2196F3;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .lock-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .lock-text {
+            font-weight: bold;
+        }
+        
+        .lock-message {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background-color: #FFF3E0;
+            border-radius: 4px;
+            margin: 8px 0;
+        }
+        
+        .lock-message-text {
+            margin-left: 8px;
+            color: #E65100;
+        }
+        
+        .input-container {
+            display: flex;
+            margin: 16px 0;
+            gap: 8px;
+        }
+        
+        .input {
+            flex: 1;
+            height: 48px;
+            background-color: white;
+            border-radius: 4px;
+            padding: 0 12px;
+            border: 1px solid #E0E0E0;
+            font-size: 16px;
+        }
+        
+        .add-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #2196F3;
+            height: 48px;
+            padding: 0 16px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .todo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .todo-checkbox {
+            margin-right: 12px;
+            font-size: 24px;
+            color: #9E9E9E;
+            cursor: pointer;
+        }
+        
+        .todo-checkbox.checked {
+            color: #4CAF50;
+        }
+        
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+            word-break: break-word;
+        }
+        
+        .completed-todo-text {
+            text-decoration: line-through;
+            color: #9E9E9E;
+        }
+        
+        .priority-todo-text {
+            font-weight: bold;
+            color: #1976D2;
+        }
+        
+        .delete-button {
+            padding: 4px;
+            font-size: 24px;
+            color: #F44336;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .priority-star {
+            color: gold;
+            margin-left: 4px;
+        }
+        
+        /* PWA installation prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 100;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .install-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .install-button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .dismiss-button {
+            background: #9E9E9E;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">My Todo List</div>
+        <div class="lock-status" id="lockStatus">
+            <span class="lock-icon">🔒</span>
+            <span class="lock-text" style="color: #F44336;">Locked</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="lock-message" id="lockMessage">
+            <span style="font-size: 24px;">⚠️</span>
+            <span class="lock-message-text">Complete the first 2 tasks to unlock the rest</span>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" class="input" id="todoInput" placeholder="Add a new task...">
+            <button class="add-button" id="addButton">Add</button>
+        </div>
+        
+        <div class="todo-list" id="todoList">
+            <!-- Todo items will be inserted here dynamically -->
+        </div>
+        
+        <div class="chart-container" style="margin-top: 20px; display: none;" id="chartContainer">
+            <h2 style="margin-bottom: 10px;">Task Completion History</h2>
+            <div class="chart-tabs" style="display: flex; margin-bottom: 10px;">
+                <button class="chart-tab active" id="weeklyTab" style="flex: 1; padding: 8px; background: #2196F3; color: white; border: none; border-radius: 4px 0 0 4px; cursor: pointer;">Weekly</button>
+                <button class="chart-tab" id="monthlyTab" style="flex: 1; padding: 8px; background: #e0e0e0; color: #333; border: none; border-radius: 0 4px 4px 0; cursor: pointer;">Monthly</button>
+            </div>
+            <canvas id="completionChart" style="width: 100%; height: 300px; background: white; border-radius: 4px;"></canvas>
+        </div>
+    </div>
+    
+    <div class="install-prompt" id="installPrompt">
+        <div>Add this app to your home screen for easier access!</div>
+        <div class="install-buttons">
+            <button class="install-button" id="installButton">Install</button>
+            <button class="dismiss-button" id="dismissButton">Not Now</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize todo list with sample data if empty
+        let todos = [];
+        let isLocked = true;
+        let completionChart = null;
+        
+        // Try to load from localStorage, but handle sandbox environments gracefully
+        try {
+            const storedTodos = localStorage.getItem('todos');
+            if (storedTodos) {
+                todos = JSON.parse(storedTodos);
+            } else {
+                todos = [
+                    { id: '1', title: 'Gym', completed: false, history: [] },
+                    { id: '2', title: 'Trading Research 20m', completed: false, history: [] }
+                ];
+            }
+        } catch (error) {
+            console.log('Running in a restricted environment, using sample data instead');
+            todos = [
+                { id: '1', title: 'Gym', completed: false, history: [] },
+                { id: '2', title: 'Trading Research 20m', completed: false, history: [] }
+            ];
+        }
+        
+        // DOM Elements
+        const todoInput = document.getElementById('todoInput');
+        const addButton = document.getElementById('addButton');
+        const todoList = document.getElementById('todoList');
+        const lockStatus = document.getElementById('lockStatus');
+        const lockMessage = document.getElementById('lockMessage');
+        const installPrompt = document.getElementById('installPrompt');
+        const installButton = document.getElementById('installButton');
+        const dismissButton = document.getElementById('dismissButton');
+        const chartContainer = document.getElementById('chartContainer');
+        const weeklyTab = document.getElementById('weeklyTab');
+        const monthlyTab = document.getElementById('monthlyTab');
+        
+        // Event Listeners
+        addButton.addEventListener('click', addTodo);
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTodo();
+        });
+        weeklyTab.addEventListener('click', () => {
+            weeklyTab.classList.add('active');
+            weeklyTab.style.background = '#2196F3';
+            weeklyTab.style.color = 'white';
+            monthlyTab.classList.remove('active');
+            monthlyTab.style.background = '#e0e0e0';
+            monthlyTab.style.color = '#333';
+            updateChart('weekly');
+        });
+        monthlyTab.addEventListener('click', () => {
+            monthlyTab.classList.add('active');
+            monthlyTab.style.background = '#2196F3';
+            monthlyTab.style.color = 'white';
+            weeklyTab.classList.remove('active');
+            weeklyTab.style.background = '#e0e0e0';
+            weeklyTab.style.color = '#333';
+            updateChart('monthly');
+        });
+        
+        // Initialize
+        renderTodos();
+        checkLockStatus();
+        setupManifest();
+        initializeChart();
+        
+        // Setup web manifest for PWA
+        function setupManifest() {
+            const manifestData = {
+                "name": "Todo Lock App",
+                "short_name": "TodoLock",
+                "start_url": ".",
+                "display": "standalone",
+                "background_color": "#F5F5F5",
+                "theme_color": "#2196F3",
+                "description": "A todo list app with locking feature",
+                "icons": [{
+                    "src": "/api/placeholder/192/192",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }]
+            };
+            
+            const stringManifest = JSON.stringify(manifestData);
+            const blob = new Blob([stringManifest], {type: 'application/json'});
+            const manifestURL = URL.createObjectURL(blob);
+            
+            document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+        }
+        
+        // Show PWA install prompt logic
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Only show if not already installed
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                setTimeout(() => {
+                    installPrompt.style.display = 'block';
+                }, 3000);
+            }
+        });
+        
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installPrompt.style.display = 'none';
+            } else {
+                // Show iOS-specific install instructions
+                alert('To install: tap the share button in your browser and select "Add to Home Screen"');
+            }
+        });
+        
+        dismissButton.addEventListener('click', () => {
+            installPrompt.style.display = 'none';
+        });
+        
+        // Add a new todo
+        function addTodo() {
+            const text = todoInput.value.trim();
+            if (text) {
+                const newTodo = {
+                    id: Date.now().toString(),
+                    title: text,
+                    completed: false,
+                    history: []
+                };
+                
+                todos.push(newTodo);
+                saveTodos();
+                renderTodos();
+                todoInput.value = '';
+                checkLockStatus();
+            }
+        }
+        
+        // Toggle todo completion status
+        function toggleTodo(id) {
+            todos = todos.map(todo => {
+                if (todo.id === id) {
+                    const isCompleting = !todo.completed;
+                    return { 
+                        ...todo, 
+                        completed: isCompleting,
+                        // Track completion date when marking as complete
+                        completedDate: isCompleting ? new Date().toISOString() : null,
+                        // Initialize history array if it doesn't exist
+                        history: todo.history || [],
+                        // Add to history when completing
+                        ...(isCompleting && { 
+                            history: [...(todo.history || []), 
+                                      { date: new Date().toISOString(), action: 'completed' }
+                            ] 
+                        })
+                    };
+                }
+                return todo;
+            });
+            
+            saveTodos();
+            renderTodos();
+            checkLockStatus();
+        }
+        
+        // Delete a todo
+        function deleteTodo(id) {
+            todos = todos.filter(todo => todo.id !== id);
+            saveTodos();
+            renderTodos();
+            checkLockStatus();
+        }
+        
+        // Save todos to localStorage
+        function saveTodos() {
+            try {
+                localStorage.setItem('todos', JSON.stringify(todos));
+            } catch (error) {
+                console.log('Unable to save to localStorage - likely in a sandbox environment');
+                // In a real deployment this would work fine
+            }
+        }
+        
+        // Check if app should be unlocked
+        function checkLockStatus() {
+            if (todos.length >= 2) {
+                const completedCount = todos.filter(todo => todo.completed).length;
+                isLocked = completedCount < 2;
+            } else {
+                isLocked = true;
+            }
+            
+            // Update UI to reflect lock status
+            if (isLocked) {
+                lockStatus.innerHTML = `<span class="lock-icon">🔒</span>
+                                      <span class="lock-text" style="color: #F44336;">Locked</span>`;
+                lockMessage.style.display = 'flex';
+                chartContainer.style.display = 'none';
+            } else {
+                lockStatus.innerHTML = `<span class="lock-icon">🔓</span>
+                                      <span class="lock-text" style="color: #4CAF50;">Unlocked</span>`;
+                lockMessage.style.display = 'none';
+                chartContainer.style.display = 'block';
+                updateChart('weekly');
+            }
+            
+            renderTodos();
+        }
+        
+        // Render todos to the DOM
+        function renderTodos() {
+            todoList.innerHTML = '';
+            
+            // Only show first 2 todos if locked
+            const todosToShow = isLocked ? todos.slice(0, 2) : todos;
+            
+            todosToShow.forEach((todo, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.className = 'todo-item';
+                
+                const isPriority = index === 0 || index === 1;
+                
+                todoItem.innerHTML = `
+                    <div class="todo-checkbox ${todo.completed ? 'checked' : ''}" onclick="toggleTodo('${todo.id}')">
+                        ${todo.completed ? '✅' : '⬜'}
+                    </div>
+                    <div class="todo-text ${todo.completed ? 'completed-todo-text' : ''} ${isPriority ? 'priority-todo-text' : ''}">
+                        ${todo.title}
+                        ${isPriority && !todo.completed ? '<span class="priority-star">⭐️</span>' : ''}
+                    </div>
+                    <button class="delete-button" onclick="deleteTodo('${todo.id}')">🗑️</button>
+                `;
+                
+                todoList.appendChild(todoItem);
+            });
+        }
+        
+        // Initialize and render the completion chart
+        function initializeChart() {
+            const ctx = document.getElementById('completionChart').getContext('2d');
+            completionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            title: {
+                                display: true,
+                                text: 'Completed Tasks'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return tooltipItems[0].label;
+                                },
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw} completions`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update chart with completion data
+        function updateChart(timeframe) {
+            if (!completionChart) return;
+            
+            // Get dates for the last week or month
+            const today = new Date();
+            const startDate = new Date();
+            if (timeframe === 'weekly') {
+                startDate.setDate(today.getDate() - 7); // 7 days ago
+            } else {
+                startDate.setMonth(today.getMonth() - 1); // 1 month ago
+            }
+            
+            // Create a map of task titles to their completion histories
+            const taskCompletions = {};
+            
+            // Process each todo to extract completion data
+            todos.forEach(todo => {
+                if (!todo.history) return;
+                
+                // Filter history entries within the time range
+                const relevantHistory = todo.history.filter(entry => {
+                    const entryDate = new Date(entry.date);
+                    return entryDate >= startDate && entryDate <= today && entry.action === 'completed';
+                });
+                
+                if (relevantHistory.length > 0) {
+                    taskCompletions[todo.title] = relevantHistory;
+                }
+            });
+            
+            // Generate date labels based on timeframe
+            const labels = [];
+            const datasets = [];
+            const dateFormat = { month: 'short', day: 'numeric' };
+            
+            // Generate all dates in the range
+            let dateLabels = [];
+            let currentDate = new Date(startDate);
+            
+            while (currentDate <= today) {
+                const formattedDate = currentDate.toLocaleDateString('en-US', dateFormat);
+                dateLabels.push(formattedDate);
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            
+            // Create cumulative datasets for each task
+            const colors = ['#4CAF50', '#2196F3', '#F44336', '#FF9800', '#9C27B0', '#795548'];
+            let colorIndex = 0;
+            
+            for (const [taskTitle, completions] of Object.entries(taskCompletions)) {
+                const data = new Array(dateLabels.length).fill(0);
+                
+                // Count completions per day
+                completions.forEach(entry => {
+                    const entryDate = new Date(entry.date);
+                    const formattedEntryDate = entryDate.toLocaleDateString('en-US', dateFormat);
+                    const index = dateLabels.indexOf(formattedEntryDate);
+                    if (index !== -1) {
+                        data[index]++;
+                    }
+                });
+                
+                // Make it cumulative
+                for (let i = 1; i < data.length; i++) {
+                    data[i] += data[i-1];
+                }
+                
+                datasets.push({
+                    label: taskTitle,
+                    data: data,
+                    backgroundColor: colors[colorIndex % colors.length],
+                    borderColor: colors[colorIndex % colors.length],
+                    borderWidth: 1
+                });
+                
+                colorIndex++;
+            }
+            
+            // Update the chart
+            completionChart.data.labels = dateLabels;
+            completionChart.data.datasets = datasets;
+            completionChart.update();
+        }
+        
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swScript = `
+                    self.addEventListener('install', (e) => {
+                        e.waitUntil(
+                            caches.open('todo-lock-v1').then((cache) => {
+                                return cache.addAll([
+                                    './',
+                                    './index.html',
+                                    'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js'
+                                ]);
+                            })
+                        );
+                    });
+                    
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(
+                            caches.match(e.request).then((response) => {
+                                return response || fetch(e.request);
+                            })
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swScript], {type: 'application/javascript'});
+                const swURL = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swURL)
+                    .then(reg => console.log('Service worker registered'))
+                    .catch(err => console.error('Service worker registration failed', err));
+            });
+        }
+    </script>
+</body>
+</html>
