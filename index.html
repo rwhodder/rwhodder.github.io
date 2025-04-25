@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#283747">
+    <meta name="format-detection" content="telephone=no">
     <title>Todo Lock App</title>
     <link rel="manifest" id="manifest-placeholder">
     <link rel="apple-touch-icon" href="/api/placeholder/192/192">
@@ -15,33 +17,40 @@
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            background-color: #F5F5F5;
-            padding-bottom: 20px;
+            background-color: #1e2a38;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+            color: #e0e0e0;
+            touch-action: manipulation;
+            user-select: none;
+            overscroll-behavior: none;
         }
         
         .container {
-            max-width: 500px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 0 10px;
+            padding: 0 12px;
         }
         
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px;
-            background-color: #2196F3;
-            color: white;
+            padding: 16px 12px;
+            background-color: #283747;
+            color: #ff9d00;
             position: sticky;
             top: 0;
             z-index: 10;
+            padding-top: env(safe-area-inset-top, 16px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
         }
         
@@ -59,44 +68,50 @@
             display: flex;
             align-items: center;
             padding: 12px;
-            background-color: #FFF3E0;
+            background-color: #2c3e50;
+            border-left: 4px solid #ff9d00;
             border-radius: 4px;
             margin: 8px 0;
         }
         
         .lock-message-text {
             margin-left: 8px;
-            color: #E65100;
+            color: #ff9d00;
+            font-size: 14px;
         }
         
         .input-container {
             display: flex;
-            margin: 16px 0;
+            margin: 12px 0;
             gap: 8px;
         }
         
         .input {
             flex: 1;
             height: 48px;
-            background-color: white;
+            background-color: #2c3e50;
             border-radius: 4px;
             padding: 0 12px;
-            border: 1px solid #E0E0E0;
+            border: 1px solid #34495e;
             font-size: 16px;
+            color: #e0e0e0;
+            -webkit-appearance: none;
         }
         
         .add-button {
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #2196F3;
+            background-color: #ff9d00;
             height: 48px;
             padding: 0 16px;
             border-radius: 4px;
-            color: white;
+            color: #1e2a38;
             font-weight: bold;
             border: none;
             cursor: pointer;
+            -webkit-appearance: none;
+            min-width: 60px;
         }
         
         .todo-list {
@@ -108,68 +123,238 @@
         .todo-item {
             display: flex;
             align-items: center;
-            background-color: white;
-            padding: 12px;
+            background-color: #283747;
+            padding: 14px 12px;
             border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
         
         .todo-checkbox {
             margin-right: 12px;
-            font-size: 24px;
-            color: #9E9E9E;
+            font-size: 28px;
+            color: #34495e;
             cursor: pointer;
+            padding: 6px;
+            margin-left: -6px;
         }
         
         .todo-checkbox.checked {
-            color: #4CAF50;
+            color: #ff9d00;
         }
         
         .todo-text {
             flex: 1;
             font-size: 16px;
             word-break: break-word;
+            color: #e0e0e0;
+            padding: 4px 0;
         }
         
         .completed-todo-text {
             text-decoration: line-through;
-            color: #9E9E9E;
+            color: #7f8c8d;
         }
         
         .priority-todo-text {
             font-weight: bold;
-            color: #1976D2;
+            color: #ff9d00;
         }
         
         .delete-button {
-            padding: 4px;
-            font-size: 24px;
-            color: #F44336;
+            padding: 8px;
+            font-size: 22px;
+            color: #e74c3c;
             cursor: pointer;
             background: none;
             border: none;
+            margin-right: -8px;
         }
         
         .priority-star {
-            color: gold;
+            color: #ff9d00;
             margin-left: 4px;
+        }
+        
+        /* Chart styling */
+        .chart-container {
+            background-color: #283747;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .chart-container h2 {
+            color: #ff9d00;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .chart-tabs {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .chart-tab {
+            flex: 1;
+            padding: 10px 8px;
+            background: #2c3e50;
+            color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .chart-tab.active {
+            background: #ff9d00;
+            color: #1e2a38;
+        }
+        
+        canvas#completionChart {
+            height: 250px !important;
+        }
+        
+        /* Streak tracking styles */
+        .streak-container {
+            background-color: #283747;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            display: none;
+        }
+        
+        .streak-container h2 {
+            color: #ff9d00;
+            margin-bottom: 10px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .streak-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .streak-card {
+            flex: 1;
+            min-width: 100px;
+            background-color: #2c3e50;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .streak-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff9d00;
+            margin-bottom: 4px;
+        }
+        
+        .streak-label {
+            font-size: 12px;
+            color: #bdc3c7;
+        }
+        
+        .streak-calendar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .streak-day {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background-color: #34495e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .streak-day.completed {
+            background-color: #ff9d00;
+            color: #1e2a38;
+        }
+        
+        .streak-day.today {
+            border: 2px solid #ff9d00;
+        }
+        
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: #ff9d00;
+            color: #1e2a38;
+            border-radius: 15px;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .streak-milestone {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2c3e50;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 4px solid #ff9d00;
+        }
+        
+        .streak-milestone-text {
+            font-size: 14px;
+        }
+        
+        .streak-milestone-progress {
+            width: 100%;
+            height: 6px;
+            background-color: #34495e;
+            border-radius: 3px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        
+        .streak-milestone-bar {
+            height: 100%;
+            background-color: #ff9d00;
+            border-radius: 3px;
+        }
+        
+        .streak-fire {
+            font-size: 20px;
+            margin-right: 5px;
         }
         
         /* PWA installation prompt */
         .install-prompt {
             position: fixed;
-            bottom: 20px;
+            bottom: env(safe-area-inset-bottom, 20px);
             left: 50%;
             transform: translateX(-50%);
-            background: white;
+            background: #283747;
             padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             display: none;
             z-index: 100;
             width: 90%;
             max-width: 400px;
             text-align: center;
+            color: #e0e0e0;
+            border: 1px solid #ff9d00;
         }
         
         .install-buttons {
@@ -180,22 +365,42 @@
         }
         
         .install-button {
-            background: #2196F3;
-            color: white;
+            background: #ff9d00;
+            color: #1e2a38;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 16px;
             border-radius: 4px;
             font-weight: bold;
             cursor: pointer;
         }
         
         .dismiss-button {
-            background: #9E9E9E;
-            color: white;
+            background: #2c3e50;
+            color: #e0e0e0;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 16px;
             border-radius: 4px;
             cursor: pointer;
+        }
+        
+        /* iOS specific styles */
+        @supports (-webkit-touch-callout: none) {
+            input, button {
+                font-size: 16px; /* Prevents zoom on input focus */
+            }
+            
+            .todo-item {
+                margin-bottom: 2px;
+            }
+            
+            /* Improved tap targets for iOS */
+            .delete-button, .todo-checkbox {
+                min-height: 44px;
+                min-width: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -223,13 +428,51 @@
             <!-- Todo items will be inserted here dynamically -->
         </div>
         
+        <!-- New Streak Container -->
+        <div class="streak-container" id="streakContainer">
+            <h2>
+                <span class="streak-fire">🔥</span> 
+                Your Streak Stats
+            </h2>
+            <div class="streak-cards">
+                <div class="streak-card">
+                    <div class="streak-value" id="currentStreak">0</div>
+                    <div class="streak-label">Current Streak</div>
+                </div>
+                <div class="streak-card">
+                    <div class="streak-value" id="bestStreak">0</div>
+                    <div class="streak-label">Best Streak</div>
+                </div>
+                <div class="streak-card">
+                    <div class="streak-value" id="totalCompleted">0</div>
+                    <div class="streak-label">Total Completed</div>
+                </div>
+            </div>
+            
+            <div class="streak-milestone">
+                <div>
+                    <div class="streak-milestone-text">
+                        Next milestone: <span id="nextMilestone">7</span> day streak
+                    </div>
+                    <div class="streak-milestone-progress">
+                        <div class="streak-milestone-bar" id="milestoneProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 style="margin-top: 20px;">Last 30 Days</h2>
+            <div class="streak-calendar" id="streakCalendar">
+                <!-- Days will be inserted here dynamically -->
+            </div>
+        </div>
+        
         <div class="chart-container" style="margin-top: 20px; display: none;" id="chartContainer">
             <h2 style="margin-bottom: 10px;">Task Completion History</h2>
             <div class="chart-tabs" style="display: flex; margin-bottom: 10px;">
-                <button class="chart-tab active" id="weeklyTab" style="flex: 1; padding: 8px; background: #2196F3; color: white; border: none; border-radius: 4px 0 0 4px; cursor: pointer;">Weekly</button>
-                <button class="chart-tab" id="monthlyTab" style="flex: 1; padding: 8px; background: #e0e0e0; color: #333; border: none; border-radius: 0 4px 4px 0; cursor: pointer;">Monthly</button>
+                <button class="chart-tab active" id="weeklyTab" style="flex: 1; padding: 8px; background: #ff9d00; color: #1e2a38; border: none; border-radius: 4px 0 0 4px; cursor: pointer;">Weekly</button>
+                <button class="chart-tab" id="monthlyTab" style="flex: 1; padding: 8px; background: #2c3e50; color: #e0e0e0; border: none; border-radius: 0 4px 4px 0; cursor: pointer;">Monthly</button>
             </div>
-            <canvas id="completionChart" style="width: 100%; height: 300px; background: white; border-radius: 4px;"></canvas>
+            <canvas id="completionChart" style="width: 100%; height: 300px; background: #283747; border-radius: 4px;"></canvas>
         </div>
     </div>
     
@@ -246,6 +489,13 @@
         let todos = [];
         let isLocked = true;
         let completionChart = null;
+        let streakData = {
+            currentStreak: 0,
+            bestStreak: 0,
+            totalCompleted: 0,
+            lastCompletionDate: null,
+            completionHistory: {}
+        };
         
         // Try to load from localStorage, but handle sandbox environments gracefully
         try {
@@ -257,6 +507,12 @@
                     { id: '1', title: 'Gym', completed: false, history: [] },
                     { id: '2', title: 'Trading Research 20m', completed: false, history: [] }
                 ];
+            }
+            
+            // Load streak data
+            const storedStreakData = localStorage.getItem('streakData');
+            if (storedStreakData) {
+                streakData = JSON.parse(storedStreakData);
             }
         } catch (error) {
             console.log('Running in a restricted environment, using sample data instead');
@@ -278,6 +534,15 @@
         const chartContainer = document.getElementById('chartContainer');
         const weeklyTab = document.getElementById('weeklyTab');
         const monthlyTab = document.getElementById('monthlyTab');
+        const streakContainer = document.getElementById('streakContainer');
+        
+        // Streak DOM elements
+        const currentStreakElement = document.getElementById('currentStreak');
+        const bestStreakElement = document.getElementById('bestStreak');
+        const totalCompletedElement = document.getElementById('totalCompleted');
+        const nextMilestoneElement = document.getElementById('nextMilestone');
+        const milestoneProgressElement = document.getElementById('milestoneProgress');
+        const streakCalendarElement = document.getElementById('streakCalendar');
         
         // Event Listeners
         addButton.addEventListener('click', addTodo);
@@ -286,20 +551,20 @@
         });
         weeklyTab.addEventListener('click', () => {
             weeklyTab.classList.add('active');
-            weeklyTab.style.background = '#2196F3';
-            weeklyTab.style.color = 'white';
+            weeklyTab.style.background = '#ff9d00';
+            weeklyTab.style.color = '#1e2a38';
             monthlyTab.classList.remove('active');
-            monthlyTab.style.background = '#e0e0e0';
-            monthlyTab.style.color = '#333';
+            monthlyTab.style.background = '#2c3e50';
+            monthlyTab.style.color = '#e0e0e0';
             updateChart('weekly');
         });
         monthlyTab.addEventListener('click', () => {
             monthlyTab.classList.add('active');
-            monthlyTab.style.background = '#2196F3';
-            monthlyTab.style.color = 'white';
+            monthlyTab.style.background = '#ff9d00';
+            monthlyTab.style.color = '#1e2a38';
             weeklyTab.classList.remove('active');
-            weeklyTab.style.background = '#e0e0e0';
-            weeklyTab.style.color = '#333';
+            weeklyTab.style.background = '#2c3e50';
+            weeklyTab.style.color = '#e0e0e0';
             updateChart('monthly');
         });
         
@@ -308,6 +573,8 @@
         checkLockStatus();
         setupManifest();
         initializeChart();
+        updateStreakTracking();
+        renderStreakCalendar();
         
         // Setup web manifest for PWA
         function setupManifest() {
@@ -316,13 +583,15 @@
                 "short_name": "TodoLock",
                 "start_url": ".",
                 "display": "standalone",
-                "background_color": "#F5F5F5",
-                "theme_color": "#2196F3",
+                "background_color": "#1e2a38",
+                "theme_color": "#283747",
                 "description": "A todo list app with locking feature",
+                "orientation": "portrait",
                 "icons": [{
                     "src": "/api/placeholder/192/192",
                     "sizes": "192x192",
-                    "type": "image/png"
+                    "type": "image/png",
+                    "purpose": "any maskable"
                 }]
             };
             
@@ -382,32 +651,162 @@
             }
         }
         
-        // Toggle todo completion status
+        // Toggle todo completion status and update streak
         function toggleTodo(id) {
+            let actionTaken = false;
+            
             todos = todos.map(todo => {
                 if (todo.id === id) {
                     const isCompleting = !todo.completed;
+                    actionTaken = true;
+                    
+                    // Track completion date when marking as complete
+                    const currentDate = new Date();
+                    const today = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+                    
+                    // Add to history when completing
+                    const updatedHistory = todo.history || [];
+                    if (isCompleting) {
+                        updatedHistory.push({ 
+                            date: currentDate.toISOString(), 
+                            action: 'completed' 
+                        });
+                        
+                        // Update streak data
+                        updateStreakOnCompletion(today);
+                    }
+                    
                     return { 
                         ...todo, 
                         completed: isCompleting,
-                        // Track completion date when marking as complete
-                        completedDate: isCompleting ? new Date().toISOString() : null,
-                        // Initialize history array if it doesn't exist
-                        history: todo.history || [],
-                        // Add to history when completing
-                        ...(isCompleting && { 
-                            history: [...(todo.history || []), 
-                                      { date: new Date().toISOString(), action: 'completed' }
-                            ] 
-                        })
+                        completedDate: isCompleting ? currentDate.toISOString() : null,
+                        history: updatedHistory
                     };
                 }
                 return todo;
             });
             
-            saveTodos();
-            renderTodos();
-            checkLockStatus();
+            if (actionTaken) {
+                saveTodos();
+                saveStreakData();
+                renderTodos();
+                checkLockStatus();
+                updateStreakTracking();
+                renderStreakCalendar();
+            }
+        }
+        
+        // Update streak data when a task is completed
+        function updateStreakOnCompletion(today) {
+            // Initialize completion history if needed
+            if (!streakData.completionHistory) {
+                streakData.completionHistory = {};
+            }
+            
+            // Mark today as completed
+            streakData.completionHistory[today] = true;
+            
+            // Update total completed tasks
+            streakData.totalCompleted = (streakData.totalCompleted || 0) + 1;
+            
+            // Calculate current streak
+            const yesterdayDate = new Date();
+            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+            const yesterday = yesterdayDate.toISOString().split('T')[0];
+            
+            // If there was a completion yesterday or this is the first completion
+            if (streakData.completionHistory[yesterday] || streakData.currentStreak === 0) {
+                streakData.currentStreak = (streakData.currentStreak || 0) + 1;
+                
+                // Update best streak if current is better
+                if (streakData.currentStreak > (streakData.bestStreak || 0)) {
+                    streakData.bestStreak = streakData.currentStreak;
+                }
+            } else {
+                // Reset streak if no completion yesterday
+                streakData.currentStreak = 1;
+            }
+            
+            // Update last completion date
+            streakData.lastCompletionDate = today;
+        }
+        
+        // Check if a day was missed and reset streak if needed
+        function checkForMissedDays() {
+            if (!streakData.lastCompletionDate) return;
+            
+            const today = new Date().toISOString().split('T')[0];
+            if (today === streakData.lastCompletionDate) return; // Today is already recorded
+            
+            const lastCompletionDate = new Date(streakData.lastCompletionDate);
+            const currentDate = new Date();
+            
+            // Set times to midnight to compare just the dates
+            lastCompletionDate.setHours(0, 0, 0, 0);
+            currentDate.setHours(0, 0, 0, 0);
+            
+            // Calculate days difference
+            const timeDiff = currentDate - lastCompletionDate;
+            const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            
+            // If more than 1 day has passed, reset streak
+            if (daysDiff > 1) {
+                streakData.currentStreak = 0;
+                saveStreakData();
+                updateStreakTracking();
+            }
+        }
+        
+        // Update streak tracking UI
+        function updateStreakTracking() {
+            checkForMissedDays();
+            
+            // Update streak stats display
+            currentStreakElement.textContent = streakData.currentStreak || 0;
+            bestStreakElement.textContent = streakData.bestStreak || 0;
+            totalCompletedElement.textContent = streakData.totalCompleted || 0;
+            
+            // Calculate next milestone
+            const milestones = [3, 7, 14, 21, 30, 60, 90, 180, 365];
+            let nextMilestone = milestones.find(m => m > streakData.currentStreak);
+            if (!nextMilestone) {
+                nextMilestone = Math.ceil(streakData.currentStreak / 100) * 100;
+            }
+            
+            // Update milestone progress
+            const previousMilestone = milestones.filter(m => m < streakData.currentStreak).pop() || 0;
+            const milestoneRange = nextMilestone - previousMilestone;
+            const currentProgress = streakData.currentStreak - previousMilestone;
+            const percentComplete = Math.min(100, Math.max(0, (currentProgress / milestoneRange) * 100));
+            
+            nextMilestoneElement.textContent = nextMilestone;
+            milestoneProgressElement.style.width = `${percentComplete}%`;
+        }
+        
+        // Render streak calendar for the last 30 days
+        function renderStreakCalendar() {
+            streakCalendarElement.innerHTML = '';
+            
+            const today = new Date();
+            const calendarDays = 30; // Show last 30 days
+            
+            for (let i = calendarDays - 1; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(today.getDate() - i);
+                
+                const dateStr = date.toISOString().split('T')[0];
+                const isToday = i === 0;
+                const isCompleted = streakData.completionHistory && streakData.completionHistory[dateStr];
+                
+                const dayElement = document.createElement('div');
+                dayElement.className = `streak-day${isCompleted ? ' completed' : ''}${isToday ? ' today' : ''}`;
+                dayElement.title = dateStr;
+                
+                // Add date number (day of month)
+                dayElement.textContent = date.getDate();
+                
+                streakCalendarElement.appendChild(dayElement);
+            }
         }
         
         // Delete a todo
@@ -428,6 +827,15 @@
             }
         }
         
+        // Save streak data to localStorage
+        function saveStreakData() {
+            try {
+                localStorage.setItem('streakData', JSON.stringify(streakData));
+            } catch (error) {
+                console.log('Unable to save streak data to localStorage');
+            }
+        }
+        
         // Check if app should be unlocked
         function checkLockStatus() {
             if (todos.length >= 2) {
@@ -440,21 +848,23 @@
             // Update UI to reflect lock status
             if (isLocked) {
                 lockStatus.innerHTML = `<span class="lock-icon">🔒</span>
-                                      <span class="lock-text" style="color: #F44336;">Locked</span>`;
+                                      <span class="lock-text" style="color: #e74c3c;">Locked</span>`;
                 lockMessage.style.display = 'flex';
                 chartContainer.style.display = 'none';
+                streakContainer.style.display = 'none';
             } else {
                 lockStatus.innerHTML = `<span class="lock-icon">🔓</span>
-                                      <span class="lock-text" style="color: #4CAF50;">Unlocked</span>`;
+                                      <span class="lock-text" style="color: #ff9d00;">Unlocked</span>`;
                 lockMessage.style.display = 'none';
                 chartContainer.style.display = 'block';
+                streakContainer.style.display = 'block';
                 updateChart('weekly');
             }
             
             renderTodos();
         }
         
-        // Render todos to the DOM
+        // Render todos to the DOM with improved mobile touch targets
         function renderTodos() {
             todoList.innerHTML = '';
             
@@ -479,14 +889,34 @@
                 `;
                 
                 todoList.appendChild(todoItem);
+                
+                // Add touchend event for better mobile response time
+                const checkbox = todoItem.querySelector('.todo-checkbox');
+                const deleteBtn = todoItem.querySelector('.delete-button');
+                
+                checkbox.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    toggleTodo(todo.id);
+                });
+                
+                deleteBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    deleteTodo(todo.id);
+                });
             });
         }
         
         // Initialize and render the completion chart
         function initializeChart() {
             const ctx = document.getElementById('completionChart').getContext('2d');
+            
+            // Set responsive options specifically for mobile
+            Chart.defaults.font.size = 12;
+            Chart.defaults.responsive = true;
+            Chart.defaults.maintainAspectRatio = false;
+            
             completionChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: [],
                     datasets: []
@@ -498,25 +928,65 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                stepSize: 1
+                                stepSize: 1,
+                                color: '#e0e0e0',
+                                font: {
+                                    size: 10
+                                }
                             },
                             title: {
                                 display: true,
-                                text: 'Completed Tasks'
+                                text: 'Completed Tasks',
+                                color: '#e0e0e0',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
                             }
                         },
                         x: {
                             title: {
                                 display: true,
-                                text: 'Date'
+                                text: 'Date',
+                                color: '#e0e0e0',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            ticks: {
+                                color: '#e0e0e0',
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: {
+                                    size: 10
+                                },
+                                autoSkipPadding: 10
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
                             }
                         }
                     },
                     plugins: {
                         legend: {
                             position: 'top',
+                            labels: {
+                                color: '#e0e0e0',
+                                boxWidth: 12,
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                }
+                            }
                         },
                         tooltip: {
+                            backgroundColor: '#283747',
+                            titleColor: '#ff9d00',
+                            bodyColor: '#e0e0e0',
+                            displayColors: true,
+                            boxPadding: 4,
                             callbacks: {
                                 title: function(tooltipItems) {
                                     return tooltipItems[0].label;
@@ -562,10 +1032,11 @@
                 }
             });
             
-            // Generate date labels based on timeframe
-            const labels = [];
-            const datasets = [];
+            // Update the date formatter for mobile screens
             const dateFormat = { month: 'short', day: 'numeric' };
+            if (window.innerWidth < 400) {
+                dateFormat.month = 'numeric';
+            }
             
             // Generate all dates in the range
             let dateLabels = [];
@@ -577,9 +1048,10 @@
                 currentDate.setDate(currentDate.getDate() + 1);
             }
             
-            // Create cumulative datasets for each task
-            const colors = ['#4CAF50', '#2196F3', '#F44336', '#FF9800', '#9C27B0', '#795548'];
+            // Create cumulative datasets for each task with orange/gold-themed colors
+            const colors = ['#ff9d00', '#ffb347', '#ffc87c', '#ffd8a8', '#ffebd4', '#e6b17e'];
             let colorIndex = 0;
+            const datasets = [];
             
             for (const [taskTitle, completions] of Object.entries(taskCompletions)) {
                 const data = new Array(dateLabels.length).fill(0);
@@ -608,6 +1080,33 @@
                 });
                 
                 colorIndex++;
+            }
+            
+            // Add streak dataset if we have data
+            if (Object.keys(streakData.completionHistory || {}).length > 0) {
+                const streakData = new Array(dateLabels.length).fill(0);
+                
+                // Track daily task completion count
+                dateLabels.forEach((label, index) => {
+                    const date = new Date();
+                    date.setDate(today.getDate() - (dateLabels.length - 1 - index));
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    if (streakData.completionHistory && streakData.completionHistory[dateStr]) {
+                        streakData[index] = 1;
+                    }
+                });
+                
+                datasets.push({
+                    label: 'Daily Streak',
+                    data: streakData,
+                    backgroundColor: '#e74c3c',
+                    borderColor: '#e74c3c',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointStyle: 'star',
+                    pointRadius: 6
+                });
             }
             
             // Update the chart
