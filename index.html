@@ -8,9 +8,6 @@
     <meta name="theme-color" content="#283747">
     <meta name="format-detection" content="telephone=no">
     <title>Todo Lock App</title>
-    <link rel="manifest" id="manifest-placeholder">
-    <link rel="apple-touch-icon" href="/api/placeholder/192/192">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -54,6 +51,25 @@
             font-weight: bold;
         }
         
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #2c3e50;
+            color: #ff9d00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
         .lock-status {
             display: flex;
             align-items: center;
@@ -80,6 +96,72 @@
             font-size: 14px;
         }
         
+        /* Login screen styles */
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #1e2a38;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 320px;
+            background-color: #283747;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .login-logo {
+            font-size: 50px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .login-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ff9d00;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .login-input {
+            width: 100%;
+            height: 48px;
+            background-color: #2c3e50;
+            border-radius: 4px;
+            padding: 0 12px;
+            border: 1px solid #34495e;
+            font-size: 16px;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+            -webkit-appearance: none;
+        }
+        
+        .login-button {
+            width: 100%;
+            height: 48px;
+            background-color: #ff9d00;
+            color: #1e2a38;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+        
+        /* Todo input styles */
         .input-container {
             display: flex;
             margin: 12px 0;
@@ -114,6 +196,7 @@
             min-width: 60px;
         }
         
+        /* Todo list styles */
         .todo-list {
             display: flex;
             flex-direction: column;
@@ -240,46 +323,6 @@
             margin-left: 4px;
         }
         
-        /* Chart styling */
-        .chart-container {
-            background-color: #283747;
-            padding: 16px;
-            border-radius: 4px;
-            margin-top: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-        
-        .chart-container h2 {
-            color: #ff9d00;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-        
-        .chart-tabs {
-            display: flex;
-            margin-bottom: 10px;
-        }
-        
-        .chart-tab {
-            flex: 1;
-            padding: 10px 8px;
-            background: #2c3e50;
-            color: #e0e0e0;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        
-        .chart-tab.active {
-            background: #ff9d00;
-            color: #1e2a38;
-        }
-        
-        canvas#completionChart {
-            height: 250px !important;
-        }
-        
         /* Streak tracking styles */
         .streak-container {
             background-color: #283747;
@@ -403,141 +446,188 @@
             margin-right: 5px;
         }
         
-        /* PWA installation prompt */
-        .install-prompt {
-            position: fixed;
-            bottom: env(safe-area-inset-bottom, 20px);
-            left: 50%;
-            transform: translateX(-50%);
-            background: #283747;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            display: none;
-            z-index: 100;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            color: #e0e0e0;
-            border: 1px solid #ff9d00;
-        }
-        
-        .install-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .install-button {
-            background: #ff9d00;
-            color: #1e2a38;
-            border: none;
-            padding: 10px 16px;
+        /* Chart styling */
+        .chart-container {
+            background-color: #283747;
+            padding: 16px;
             border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            display: none;
         }
         
-        .dismiss-button {
+        .chart-container h2 {
+            color: #ff9d00;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .chart-tabs {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .chart-tab {
+            flex: 1;
+            padding: 10px 8px;
             background: #2c3e50;
             color: #e0e0e0;
             border: none;
-            padding: 10px 16px;
-            border-radius: 4px;
             cursor: pointer;
-        }
-        
-        /* Login screen styles */
-        .login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #1e2a38;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .login-container {
-            width: 100%;
-            max-width: 320px;
-            background-color: #283747;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        
-        .login-logo {
-            font-size: 50px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .login-title {
-            font-size: 22px;
-            font-weight: bold;
-            color: #ff9d00;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .login-input {
-            width: 100%;
-            height: 48px;
-            background-color: #2c3e50;
-            border-radius: 4px;
-            padding: 0 12px;
-            border: 1px solid #34495e;
-            font-size: 16px;
-            color: #e0e0e0;
-            margin-bottom: 20px;
-            -webkit-appearance: none;
-        }
-        
-        .login-button {
-            width: 100%;
-            height: 48px;
-            background-color: #ff9d00;
-            color: #1e2a38;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            -webkit-appearance: none;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: #2c3e50;
-            color: #ff9d00;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
             font-size: 14px;
+            font-weight: bold;
         }
         
+        .chart-tab.active {
+            background: #ff9d00;
+            color: #1e2a38;
+        }
+        
+        canvas#completionChart {
+            height: 250px !important;
+        }
+        
+        /* iOS specific styles */
+        @supports (-webkit-touch-callout: none) {
+            input, button {
+                font-size: 16px; /* Prevents zoom on input focus */
+            }
+            
+            .todo-item {
+                margin-bottom: 2px;
+            }
+            
+            /* Improved tap targets for iOS */
+            .delete-button, .todo-checkbox {
+                min-height: 44px;
+                min-width: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="login-container">
+            <div class="login-logo">📝</div>
+            <div class="login-title">Todo Lock App</div>
+            <input type="text" class="login-input" id="nameInput" placeholder="Enter your name" autocomplete="off">
+            <button class="login-button" id="loginButton">Get Started</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="header">
+        <div class="title">My Todo List</div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="user-info" id="userInfo" style="display: none;">
+                <div class="user-avatar" id="userAvatar">JS</div>
+            </div>
+            <div class="lock-status" id="lockStatus">
+                <span class="lock-icon">🔒</span>
+                <span class="lock-text" style="color: #F44336;">Locked</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="lock-message" id="lockMessage">
+            <span style="font-size: 24px;">⚠️</span>
+            <span class="lock-message-text">Complete the first 2 tasks to unlock the rest</span>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" class="input" id="todoInput" placeholder="Add a new task...">
+            <button class="add-button" id="addButton">Add</button>
+        </div>
+        
+        <div class="todo-list" id="todoList">
+            <!-- Todo items will be inserted here dynamically -->
+        </div>
+        
+        <!-- Streak Container -->
+        <div class="streak-container" id="streakContainer">
+            <h2>
+                <span class="streak-fire">🔥</span> 
+                Your Streak Stats
+            </h2>
+            <div class="streak-cards">
+                <div class="streak-card">
+                    <div class="streak-value" id="currentStreak">0</div>
+                    <div class="streak-label">Current Streak</div>
+                </div>
+                <div class="streak-card">
+                    <div class="streak-value" id="bestStreak">0</div>
+                    <div class="streak-label">Best Streak</div>
+                </div>
+                <div class="streak-card">
+                    <div class="streak-value" id="totalCompleted">0</div>
+                    <div class="streak-label">Total Completed</div>
+                </div>
+            </div>
+            
+            <div class="streak-milestone">
+                <div>
+                    <div class="streak-milestone-text">
+                        Next milestone: <span id="nextMilestone">7</span> day streak
+                    </div>
+                    <div class="streak-milestone-progress">
+                        <div class="streak-milestone-bar" id="milestoneProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 style="margin-top: 20px;">Last 30 Days</h2>
+            <div class="streak-calendar" id="streakCalendar">
+                <!-- Days will be inserted here dynamically -->
+            </div>
+        </div>
+        
+        <div class="chart-container" id="chartContainer">
+            <h2 style="margin-bottom: 10px;">Task Completion History</h2>
+            <div class="chart-tabs">
+                <button class="chart-tab active" id="weeklyTab">Weekly</button>
+                <button class="chart-tab" id="monthlyTab">Monthly</button>
+            </div>
+            <div id="chartPlaceholder" style="width: 100%; height: 250px; background: #2c3e50; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #7f8c8d;">
+                Chart will appear when you complete tasks
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Initialize todo list with sample data if empty
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const nameInput = document.getElementById('nameInput');
+        const loginButton = document.getElementById('loginButton');
+        const userInfo = document.getElementById('userInfo');
+        const userAvatar = document.getElementById('userAvatar');
+        const todoInput = document.getElementById('todoInput');
+        const addButton = document.getElementById('addButton');
+        const todoList = document.getElementById('todoList');
+        const lockStatus = document.getElementById('lockStatus');
+        const lockMessage = document.getElementById('lockMessage');
+        const streakContainer = document.getElementById('streakContainer');
+        const chartContainer = document.getElementById('chartContainer');
+        const currentStreakElement = document.getElementById('currentStreak');
+        const bestStreakElement = document.getElementById('bestStreak');
+        const totalCompletedElement = document.getElementById('totalCompleted');
+        const nextMilestoneElement = document.getElementById('nextMilestone');
+        const milestoneProgressElement = document.getElementById('milestoneProgress');
+        const streakCalendarElement = document.getElementById('streakCalendar');
+        const weeklyTab = document.getElementById('weeklyTab');
+        const monthlyTab = document.getElementById('monthlyTab');
+
+        // App Data
         let todos = [];
         let isLocked = true;
-        let completionChart = null;
+        let userData = {
+            name: '',
+            avatar: ''
+        };
         let streakData = {
             currentStreak: 0,
             bestStreak: 0,
@@ -545,109 +635,95 @@
             lastCompletionDate: null,
             completionHistory: {}
         };
+
+        // Initialize
+        loadData();
+        setupEventListeners();
+        checkLoginStatus();
         
-        // Try to load from localStorage, but handle sandbox environments gracefully
-        try {
-            // Load user data
-            const storedUserData = localStorage.getItem('userData');
-            if (storedUserData) {
-                userData = JSON.parse(storedUserData);
-            }
-            
-            const storedTodos = localStorage.getItem('todos');
-            if (storedTodos) {
-                todos = JSON.parse(storedTodos);
-            } else {
+        // Load data from localStorage
+        function loadData() {
+            try {
+                // Load user data
+                const storedUserData = localStorage.getItem('userData');
+                if (storedUserData) {
+                    userData = JSON.parse(storedUserData);
+                }
+                
+                // Load todos
+                const storedTodos = localStorage.getItem('todos');
+                if (storedTodos) {
+                    todos = JSON.parse(storedTodos);
+                } else {
+                    todos = [
+                        { id: '1', title: 'Gym', completed: false, history: [], notes: '' },
+                        { id: '2', title: 'Trading Research 20m', completed: false, history: [], notes: '' }
+                    ];
+                }
+                
+                // Load streak data
+                const storedStreakData = localStorage.getItem('streakData');
+                if (storedStreakData) {
+                    streakData = JSON.parse(storedStreakData);
+                }
+            } catch (error) {
+                console.log('Error loading data:', error);
                 todos = [
                     { id: '1', title: 'Gym', completed: false, history: [], notes: '' },
                     { id: '2', title: 'Trading Research 20m', completed: false, history: [], notes: '' }
                 ];
             }
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Login
+            loginButton.addEventListener('click', handleLogin);
+            nameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
             
-            // Load streak data
-            const storedStreakData = localStorage.getItem('streakData');
-            if (storedStreakData) {
-                streakData = JSON.parse(storedStreakData);
+            // Todo management
+            addButton.addEventListener('click', addTodo);
+            todoInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addTodo();
+            });
+            
+            // Chart tabs
+            weeklyTab.addEventListener('click', () => {
+                weeklyTab.classList.add('active');
+                monthlyTab.classList.remove('active');
+            });
+            
+            monthlyTab.addEventListener('click', () => {
+                monthlyTab.classList.add('active');
+                weeklyTab.classList.remove('active');
+            });
+        }
+        
+        // Check if user is logged in
+        function checkLoginStatus() {
+            if (userData.name) {
+                hideLoginScreen();
+                updateUserInfo();
+                renderTodos();
+                checkLockStatus();
+                updateStreakTracking();
+                renderStreakCalendar();
+            } else {
+                showLoginScreen();
             }
-        } catch (error) {
-            console.log('Running in a restricted environment, using sample data instead');
-            todos = [
-                { id: '1', title: 'Gym', completed: false, history: [], notes: '' },
-                { id: '2', title: 'Trading Research 20m', completed: false, history: [], notes: '' }
-            ];
         }
         
-        // DOM Elements
-        const todoInput = document.getElementById('todoInput');
-        const addButton = document.getElementById('addButton');
-        const todoList = document.getElementById('todoList');
-        const lockStatus = document.getElementById('lockStatus');
-        const lockMessage = document.getElementById('lockMessage');
-        const installPrompt = document.getElementById('installPrompt');
-        const installButton = document.getElementById('installButton');
-        const dismissButton = document.getElementById('dismissButton');
-        const chartContainer = document.getElementById('chartContainer');
-        const weeklyTab = document.getElementById('weeklyTab');
-        const monthlyTab = document.getElementById('monthlyTab');
-        const streakContainer = document.getElementById('streakContainer');
-        
-        // Streak DOM elements
-        const currentStreakElement = document.getElementById('currentStreak');
-        const bestStreakElement = document.getElementById('bestStreak');
-        const totalCompletedElement = document.getElementById('totalCompleted');
-        const nextMilestoneElement = document.getElementById('nextMilestone');
-        const milestoneProgressElement = document.getElementById('milestoneProgress');
-        const streakCalendarElement = document.getElementById('streakCalendar');
-        
-        // Login DOM elements
-        const loginOverlay = document.getElementById('loginOverlay');
-        const nameInput = document.getElementById('nameInput');
-        const loginButton = document.getElementById('loginButton');
-        const userInfo = document.getElementById('userInfo');
-        const userAvatar = document.getElementById('userAvatar');
-        
-        // Event Listeners
-        addButton.addEventListener('click', addTodo);
-        todoInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addTodo();
-        });
-        weeklyTab.addEventListener('click', () => {
-            weeklyTab.classList.add('active');
-            weeklyTab.style.background = '#ff9d00';
-            weeklyTab.style.color = '#1e2a38';
-            monthlyTab.classList.remove('active');
-            monthlyTab.style.background = '#2c3e50';
-            monthlyTab.style.color = '#e0e0e0';
-            updateChart('weekly');
-        });
-        monthlyTab.addEventListener('click', () => {
-            monthlyTab.classList.add('active');
-            monthlyTab.style.background = '#ff9d00';
-            monthlyTab.style.color = '#1e2a38';
-            weeklyTab.classList.remove('active');
-            weeklyTab.style.background = '#2c3e50';
-            weeklyTab.style.color = '#e0e0e0';
-            updateChart('monthly');
-        });
-        
-        // Login button event listener
-        loginButton.addEventListener('click', handleLogin);
-        nameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleLogin();
-        });
-        
-        // Check if user is already logged in
-        if (userData.name) {
-            hideLoginScreen();
+        // Show login screen
+        function showLoginScreen() {
+            loginScreen.style.display = 'flex';
         }
         
-        // Initialize
-        renderTodos();
-        checkLockStatus();
-        setupManifest();
-        initializeChart();
-        updateStreakTracking();
-        renderStreakCalendar();
+        // Hide login screen
+        function hideLoginScreen() {
+            loginScreen.style.display = 'none';
+        }
         
         // Handle login
         function handleLogin() {
@@ -667,13 +743,12 @@
                 
                 saveUserData();
                 hideLoginScreen();
+                updateUserInfo();
+                renderTodos();
+                checkLockStatus();
+                updateStreakTracking();
+                renderStreakCalendar();
             }
-        }
-        
-        // Hide login screen
-        function hideLoginScreen() {
-            loginOverlay.style.display = 'none';
-            updateUserInfo();
         }
         
         // Update user info in header
@@ -685,71 +760,6 @@
             }
         }
         
-        // Save user data to localStorage
-        function saveUserData() {
-            try {
-                localStorage.setItem('userData', JSON.stringify(userData));
-            } catch (error) {
-                console.log('Unable to save user data to localStorage');
-            }
-        }
-        
-        // Setup web manifest for PWA
-        function setupManifest() {
-            const manifestData = {
-                "name": "Todo Lock App",
-                "short_name": "TodoLock",
-                "start_url": ".",
-                "display": "standalone",
-                "background_color": "#1e2a38",
-                "theme_color": "#283747",
-                "description": "A todo list app with locking feature",
-                "orientation": "portrait",
-                "icons": [{
-                    "src": "/api/placeholder/192/192",
-                    "sizes": "192x192",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                }]
-            };
-            
-            const stringManifest = JSON.stringify(manifestData);
-            const blob = new Blob([stringManifest], {type: 'application/json'});
-            const manifestURL = URL.createObjectURL(blob);
-            
-            document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
-        }
-        
-        // Show PWA install prompt logic
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Only show if not already installed
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                setTimeout(() => {
-                    installPrompt.style.display = 'block';
-                }, 3000);
-            }
-        });
-        
-        installButton.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                installPrompt.style.display = 'none';
-            } else {
-                // Show iOS-specific install instructions
-                alert('To install: tap the share button in your browser and select "Add to Home Screen"');
-            }
-        });
-        
-        dismissButton.addEventListener('click', () => {
-            installPrompt.style.display = 'none';
-        });
-        
         // Add a new todo
         function addTodo() {
             const text = todoInput.value.trim();
@@ -759,7 +769,7 @@
                     title: text,
                     completed: false,
                     history: [],
-                    notes: '' // Initialize with empty notes
+                    notes: ''
                 };
                 
                 todos.push(newTodo);
@@ -770,7 +780,7 @@
             }
         }
         
-        // Toggle todo completion status and update streak
+        // Toggle todo completion
         function toggleTodo(id) {
             let actionTaken = false;
             
@@ -812,6 +822,140 @@
                 checkLockStatus();
                 updateStreakTracking();
                 renderStreakCalendar();
+            }
+        }
+        
+        // Delete a todo
+        function deleteTodo(id) {
+            todos = todos.filter(todo => todo.id !== id);
+            saveTodos();
+            renderTodos();
+            checkLockStatus();
+        }
+        
+        // Save a note for a todo item
+        function saveNote(id, noteText) {
+            todos = todos.map(todo => {
+                if (todo.id === id) {
+                    return { ...todo, notes: noteText };
+                }
+                return todo;
+            });
+            
+            saveTodos();
+            renderTodos();
+        }
+        
+        // Render todos to the DOM
+        function renderTodos() {
+            todoList.innerHTML = '';
+            
+            // Only show first 2 todos if locked
+            const todosToShow = isLocked ? todos.slice(0, 2) : todos;
+            
+            todosToShow.forEach((todo, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.className = 'todo-item';
+                todoItem.dataset.id = todo.id;
+                
+                const isPriority = index === 0 || index === 1;
+                const hasNote = todo.notes && todo.notes.trim().length > 0;
+                
+                // Create the main todo item content
+                const todoMain = document.createElement('div');
+                todoMain.className = 'todo-main';
+                
+                todoMain.innerHTML = `
+                    <div class="todo-checkbox ${todo.completed ? 'checked' : ''}" data-id="${todo.id}">
+                        ${todo.completed ? '✅' : '⬜'}
+                    </div>
+                    <div class="todo-text ${todo.completed ? 'completed-todo-text' : ''} ${isPriority ? 'priority-todo-text' : ''}">
+                        ${todo.title}
+                        ${isPriority && !todo.completed ? '<span class="priority-star">⭐️</span>' : ''}
+                    </div>
+                    <div class="todo-actions">
+                        <button class="note-button ${hasNote ? 'has-note' : ''}" data-id="${todo.id}">📝</button>
+                        <button class="delete-button" data-id="${todo.id}">🗑️</button>
+                    </div>
+                `;
+                
+                todoItem.appendChild(todoMain);
+                
+                // Create note section (initially hidden)
+                const todoNote = document.createElement('div');
+                todoNote.className = 'todo-note';
+                todoNote.id = `note-${todo.id}`;
+                
+                todoNote.innerHTML = `
+                    <textarea class="todo-note-input" data-id="${todo.id}" placeholder="Add notes about this task...">${todo.notes || ''}</textarea>
+                    <div class="todo-note-actions">
+                        <button class="note-save-button" data-id="${todo.id}">Save</button>
+                        <button class="note-cancel-button" data-id="${todo.id}">Cancel</button>
+                    </div>
+                `;
+                
+                todoItem.appendChild(todoNote);
+                todoList.appendChild(todoItem);
+                
+                // Add event listeners
+                const checkbox = todoMain.querySelector('.todo-checkbox');
+                const deleteBtn = todoMain.querySelector('.delete-button');
+                const noteBtn = todoMain.querySelector('.note-button');
+                const noteTextarea = todoNote.querySelector('.todo-note-input');
+                const noteSaveBtn = todoNote.querySelector('.note-save-button');
+                const noteCancelBtn = todoNote.querySelector('.note-cancel-button');
+                
+                checkbox.addEventListener('click', () => toggleTodo(todo.id));
+                deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+                
+                // Note button toggle
+                noteBtn.addEventListener('click', () => {
+                    const noteElement = document.getElementById(`note-${todo.id}`);
+                    const isVisible = noteElement.style.display === 'block';
+                    noteElement.style.display = isVisible ? 'none' : 'block';
+                    
+                    // Focus the textarea when showing
+                    if (!isVisible) {
+                        noteElement.querySelector('.todo-note-input').focus();
+                    }
+                });
+                
+                // Save note
+                noteSaveBtn.addEventListener('click', () => {
+                    saveNote(todo.id, noteTextarea.value);
+                    document.getElementById(`note-${todo.id}`).style.display = 'none';
+                });
+                
+                // Cancel note editing
+                noteCancelBtn.addEventListener('click', () => {
+                    noteTextarea.value = todo.notes || '';
+                    document.getElementById(`note-${todo.id}`).style.display = 'none';
+                });
+            });
+        }
+        
+        // Check if app should be unlocked
+        function checkLockStatus() {
+            if (todos.length >= 2) {
+                const completedCount = todos.filter(todo => todo.completed).length;
+                isLocked = completedCount < 2;
+            } else {
+                isLocked = true;
+            }
+            
+            // Update UI to reflect lock status
+            if (isLocked) {
+                lockStatus.innerHTML = `<span class="lock-icon">🔒</span>
+                                      <span class="lock-text" style="color: #e74c3c;">Locked</span>`;
+                lockMessage.style.display = 'flex';
+                streakContainer.style.display = 'none';
+                chartContainer.style.display = 'none';
+            } else {
+                lockStatus.innerHTML = `<span class="lock-icon">🔓</span>
+                                      <span class="lock-text" style="color: #ff9d00;">Unlocked</span>`;
+                lockMessage.style.display = 'none';
+                streakContainer.style.display = 'block';
+                chartContainer.style.display = 'block';
             }
         }
         
@@ -872,7 +1016,6 @@
             if (daysDiff > 1) {
                 streakData.currentStreak = 0;
                 saveStreakData();
-                updateStreakTracking();
             }
         }
         
@@ -887,10 +1030,7 @@
             
             // Calculate next milestone
             const milestones = [3, 7, 14, 21, 30, 60, 90, 180, 365];
-            let nextMilestone = milestones.find(m => m > streakData.currentStreak);
-            if (!nextMilestone) {
-                nextMilestone = Math.ceil(streakData.currentStreak / 100) * 100;
-            }
+            let nextMilestone = milestones.find(m => m > streakData.currentStreak) || 7;
             
             // Update milestone progress
             const previousMilestone = milestones.filter(m => m < streakData.currentStreak).pop() || 0;
@@ -928,21 +1068,21 @@
             }
         }
         
-        // Delete a todo
-        function deleteTodo(id) {
-            todos = todos.filter(todo => todo.id !== id);
-            saveTodos();
-            renderTodos();
-            checkLockStatus();
-        }
-        
         // Save todos to localStorage
         function saveTodos() {
             try {
                 localStorage.setItem('todos', JSON.stringify(todos));
             } catch (error) {
-                console.log('Unable to save to localStorage - likely in a sandbox environment');
-                // In a real deployment this would work fine
+                console.log('Unable to save to localStorage');
+            }
+        }
+        
+        // Save user data to localStorage
+        function saveUserData() {
+            try {
+                localStorage.setItem('userData', JSON.stringify(userData));
+            } catch (error) {
+                console.log('Unable to save user data to localStorage');
             }
         }
         
@@ -953,390 +1093,6 @@
             } catch (error) {
                 console.log('Unable to save streak data to localStorage');
             }
-        }
-        
-        // Check if app should be unlocked
-        function checkLockStatus() {
-            if (todos.length >= 2) {
-                const completedCount = todos.filter(todo => todo.completed).length;
-                isLocked = completedCount < 2;
-            } else {
-                isLocked = true;
-            }
-            
-            // Update UI to reflect lock status
-            if (isLocked) {
-                lockStatus.innerHTML = `<span class="lock-icon">🔒</span>
-                                      <span class="lock-text" style="color: #e74c3c;">Locked</span>`;
-                lockMessage.style.display = 'flex';
-                chartContainer.style.display = 'none';
-                streakContainer.style.display = 'none';
-            } else {
-                lockStatus.innerHTML = `<span class="lock-icon">🔓</span>
-                                      <span class="lock-text" style="color: #ff9d00;">Unlocked</span>`;
-                lockMessage.style.display = 'none';
-                chartContainer.style.display = 'block';
-                streakContainer.style.display = 'block';
-                updateChart('weekly');
-            }
-            
-            renderTodos();
-        }
-        
-        // Render todos to the DOM with improved mobile touch targets
-        function renderTodos() {
-            todoList.innerHTML = '';
-            
-            // Only show first 2 todos if locked
-            const todosToShow = isLocked ? todos.slice(0, 2) : todos;
-            
-            todosToShow.forEach((todo, index) => {
-                const todoItem = document.createElement('div');
-                todoItem.className = 'todo-item';
-                todoItem.dataset.id = todo.id;
-                
-                const isPriority = index === 0 || index === 1;
-                const hasNote = todo.notes && todo.notes.trim().length > 0;
-                
-                // Create the main todo item content
-                const todoMain = document.createElement('div');
-                todoMain.className = 'todo-main';
-                
-                todoMain.innerHTML = `
-                    <div class="todo-checkbox ${todo.completed ? 'checked' : ''}" data-id="${todo.id}">
-                        ${todo.completed ? '✅' : '⬜'}
-                    </div>
-                    <div class="todo-text ${todo.completed ? 'completed-todo-text' : ''} ${isPriority ? 'priority-todo-text' : ''}">
-                        ${todo.title}
-                        ${isPriority && !todo.completed ? '<span class="priority-star">⭐️</span>' : ''}
-                    </div>
-                    <div class="todo-actions">
-                        <button class="note-button ${hasNote ? 'has-note' : ''}" data-id="${todo.id}">📝</button>
-                        <button class="delete-button" data-id="${todo.id}">🗑️</button>
-                    </div>
-                `;
-                
-                todoItem.appendChild(todoMain);
-                
-                // Create note section (initially hidden)
-                const todoNote = document.createElement('div');
-                todoNote.className = 'todo-note';
-                todoNote.id = `note-${todo.id}`;
-                todoNote.style.display = 'none';
-                
-                todoNote.innerHTML = `
-                    <textarea class="todo-note-input" data-id="${todo.id}" placeholder="Add notes about this task...">${todo.notes || ''}</textarea>
-                    <div class="todo-note-actions">
-                        <button class="note-save-button" data-id="${todo.id}">Save</button>
-                        <button class="note-cancel-button" data-id="${todo.id}">Cancel</button>
-                    </div>
-                `;
-                
-                todoItem.appendChild(todoNote);
-                todoList.appendChild(todoItem);
-                
-                // Add event listeners
-                const checkbox = todoMain.querySelector('.todo-checkbox');
-                const deleteBtn = todoMain.querySelector('.delete-button');
-                const noteBtn = todoMain.querySelector('.note-button');
-                const noteTextarea = todoNote.querySelector('.todo-note-input');
-                const noteSaveBtn = todoNote.querySelector('.note-save-button');
-                const noteCancelBtn = todoNote.querySelector('.note-cancel-button');
-                
-                checkbox.addEventListener('click', () => toggleTodo(todo.id));
-                deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
-                
-                // Note button toggle
-                noteBtn.addEventListener('click', () => {
-                    const noteElement = document.getElementById(`note-${todo.id}`);
-                    const isVisible = noteElement.style.display === 'block';
-                    noteElement.style.display = isVisible ? 'none' : 'block';
-                    
-                    // Focus the textarea when showing
-                    if (!isVisible) {
-                        noteElement.querySelector('.todo-note-input').focus();
-                    }
-                });
-                
-                // Save note
-                noteSaveBtn.addEventListener('click', () => {
-                    saveNote(todo.id, noteTextarea.value);
-                    document.getElementById(`note-${todo.id}`).style.display = 'none';
-                });
-                
-                // Cancel note editing
-                noteCancelBtn.addEventListener('click', () => {
-                    noteTextarea.value = todo.notes || '';
-                    document.getElementById(`note-${todo.id}`).style.display = 'none';
-                });
-                
-                // Mobile touch events
-                checkbox.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    toggleTodo(todo.id);
-                });
-                
-                deleteBtn.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    deleteTodo(todo.id);
-                });
-            });
-        }
-        
-        // Save a note for a todo item
-        function saveNote(id, noteText) {
-            todos = todos.map(todo => {
-                if (todo.id === id) {
-                    return { ...todo, notes: noteText };
-                }
-                return todo;
-            });
-            
-            saveTodos();
-            renderTodos();
-        }
-        
-        // Initialize and render the completion chart
-        function initializeChart() {
-            const ctx = document.getElementById('completionChart').getContext('2d');
-            
-            // Set responsive options specifically for mobile
-            Chart.defaults.font.size = 12;
-            Chart.defaults.responsive = true;
-            Chart.defaults.maintainAspectRatio = false;
-            
-            completionChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: []
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1,
-                                color: '#e0e0e0',
-                                font: {
-                                    size: 10
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Completed Tasks',
-                                color: '#e0e0e0',
-                                font: {
-                                    size: 11
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Date',
-                                color: '#e0e0e0',
-                                font: {
-                                    size: 11
-                                }
-                            },
-                            ticks: {
-                                color: '#e0e0e0',
-                                maxRotation: 45,
-                                minRotation: 45,
-                                font: {
-                                    size: 10
-                                },
-                                autoSkipPadding: 10
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: '#e0e0e0',
-                                boxWidth: 12,
-                                padding: 10,
-                                font: {
-                                    size: 11
-                                }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#283747',
-                            titleColor: '#ff9d00',
-                            bodyColor: '#e0e0e0',
-                            displayColors: true,
-                            boxPadding: 4,
-                            callbacks: {
-                                title: function(tooltipItems) {
-                                    return tooltipItems[0].label;
-                                },
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${context.raw} completions`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Update chart with completion data
-        function updateChart(timeframe) {
-            if (!completionChart) return;
-            
-            // Get dates for the last week or month
-            const today = new Date();
-            const startDate = new Date();
-            if (timeframe === 'weekly') {
-                startDate.setDate(today.getDate() - 7); // 7 days ago
-            } else {
-                startDate.setMonth(today.getMonth() - 1); // 1 month ago
-            }
-            
-            // Create a map of task titles to their completion histories
-            const taskCompletions = {};
-            
-            // Process each todo to extract completion data
-            todos.forEach(todo => {
-                if (!todo.history) return;
-                
-                // Filter history entries within the time range
-                const relevantHistory = todo.history.filter(entry => {
-                    const entryDate = new Date(entry.date);
-                    return entryDate >= startDate && entryDate <= today && entry.action === 'completed';
-                });
-                
-                if (relevantHistory.length > 0) {
-                    taskCompletions[todo.title] = relevantHistory;
-                }
-            });
-            
-            // Update the date formatter for mobile screens
-            const dateFormat = { month: 'short', day: 'numeric' };
-            if (window.innerWidth < 400) {
-                dateFormat.month = 'numeric';
-            }
-            
-            // Generate all dates in the range
-            let dateLabels = [];
-            let currentDate = new Date(startDate);
-            
-            while (currentDate <= today) {
-                const formattedDate = currentDate.toLocaleDateString('en-US', dateFormat);
-                dateLabels.push(formattedDate);
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-            
-            // Create cumulative datasets for each task with orange/gold-themed colors
-            const colors = ['#ff9d00', '#ffb347', '#ffc87c', '#ffd8a8', '#ffebd4', '#e6b17e'];
-            let colorIndex = 0;
-            const datasets = [];
-            
-            for (const [taskTitle, completions] of Object.entries(taskCompletions)) {
-                const data = new Array(dateLabels.length).fill(0);
-                
-                // Count completions per day
-                completions.forEach(entry => {
-                    const entryDate = new Date(entry.date);
-                    const formattedEntryDate = entryDate.toLocaleDateString('en-US', dateFormat);
-                    const index = dateLabels.indexOf(formattedEntryDate);
-                    if (index !== -1) {
-                        data[index]++;
-                    }
-                });
-                
-                // Make it cumulative
-                for (let i = 1; i < data.length; i++) {
-                    data[i] += data[i-1];
-                }
-                
-                datasets.push({
-                    label: taskTitle,
-                    data: data,
-                    backgroundColor: colors[colorIndex % colors.length],
-                    borderColor: colors[colorIndex % colors.length],
-                    borderWidth: 1
-                });
-                
-                colorIndex++;
-            }
-            
-            // Add streak dataset if we have data
-            if (Object.keys(streakData.completionHistory || {}).length > 0) {
-                const streakData = new Array(dateLabels.length).fill(0);
-                
-                // Track daily task completion count
-                dateLabels.forEach((label, index) => {
-                    const date = new Date();
-                    date.setDate(today.getDate() - (dateLabels.length - 1 - index));
-                    const dateStr = date.toISOString().split('T')[0];
-                    
-                    if (streakData.completionHistory && streakData.completionHistory[dateStr]) {
-                        streakData[index] = 1;
-                    }
-                });
-                
-                datasets.push({
-                    label: 'Daily Streak',
-                    data: streakData,
-                    backgroundColor: '#e74c3c',
-                    borderColor: '#e74c3c',
-                    borderWidth: 2,
-                    borderDash: [5, 5],
-                    pointStyle: 'star',
-                    pointRadius: 6
-                });
-            }
-            
-            // Update the chart
-            completionChart.data.labels = dateLabels;
-            completionChart.data.datasets = datasets;
-            completionChart.update();
-        }
-        
-        // Register service worker for PWA functionality
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swScript = `
-                    self.addEventListener('install', (e) => {
-                        e.waitUntil(
-                            caches.open('todo-lock-v1').then((cache) => {
-                                return cache.addAll([
-                                    './',
-                                    './index.html',
-                                    'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js'
-                                ]);
-                            })
-                        );
-                    });
-                    
-                    self.addEventListener('fetch', (e) => {
-                        e.respondWith(
-                            caches.match(e.request).then((response) => {
-                                return response || fetch(e.request);
-                            })
-                        );
-                    });
-                `;
-                
-                const blob = new Blob([swScript], {type: 'application/javascript'});
-                const swURL = URL.createObjectURL(blob);
-                
-                navigator.serviceWorker.register(swURL)
-                    .then(reg => console.log('Service worker registered'))
-                    .catch(err => console.error('Service worker registration failed', err));
-            });
         }
     </script>
 </body>
